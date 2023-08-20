@@ -1,2 +1,5 @@
-pygame
+azure-cognitiveservices-speech
 opencv-python
+python-dotenv
+mutagen
+pygame
