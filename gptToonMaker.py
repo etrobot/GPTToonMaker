@@ -44,7 +44,6 @@ def dealScript() -> list:
 
         voices={'A':'zh-CN-XiaoshuangNeural','B':'zh-CN-XiaoyouNeural'}
         frameNum = 0
-        gap = 20
         facing=1
         for line in script:
             if len(line)==8:
@@ -60,10 +59,9 @@ def dealScript() -> list:
             line.append(audioFile)
             audioLen = round(MP3(audioFile).info.length-1,1)
             print(audioLen)
-            frameNum += gap
             line.insert(1,frameNum)
-            frameNum = int(frameNum + audioLen*gap)
-            line.insert(2, frameNum)
+            frameNum = int(frameNum + audioLen*20)
+            line.insert(2,frameNum)
             result.append(line)
 
     with open('script.csv', 'w', newline='') as file:
@@ -116,9 +114,9 @@ if __name__ == '__main__':
     video_writer = cv2.VideoWriter('game_video.avi', cv2.VideoWriter_fourcc(*'XVID'), 30, (width, height))
     current_frame = 0
 
-    pygame.mixer.pre_init(44100, -16, 1, 512)
+    # pygame.mixer.pre_init(44100, -16, 1, 512)
     pygame.init()
-    pygame.mixer.init()
+    # pygame.mixer.init()
 
     voices={}
     while current_frame<int(frames[-1][2]):
@@ -139,10 +137,10 @@ if __name__ == '__main__':
                 k=v[0]
                 if k not in voices.keys():
                     voices[v[-1]] = pygame.mixer.Sound(v[-1])
-                if current_frame == int(v[1]):
+                if current_frame == int(v[1])-15:
                     if not pygame.mixer.get_busy():
                         voices[v[-1]].play()
-                if current_frame>=int(v[1]) and current_frame<=int(v[2]):
+                if current_frame>=int(v[1]) and current_frame<=int(v[2]) and pygame.mixer.get_busy():
                     facing = int(v[3])
                     bodyImgs=imgs[k]['body'][v[4]]
                     faceImgs=imgs[k]['face'][v[5]]
