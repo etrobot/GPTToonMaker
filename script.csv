@@ -1,6 +1,9 @@
-A,20,82,1,idle,peace,你猜，大象放在冰箱里要几步？,audio/1692527526.mp3
-B,102,178,-1,idle,wronged,这是什么问题啊，怎么可能放得下？,audio/1692527527.mp3
-A,198,217,-1,idle,cheap,你就猜猜看呗,audio/1692527528.mp3
-B,237,301,-1,idle,contemptuous,好吧，我猜… 1000步,audio/1692527529.mp3
-A,321,551,-1,idle,pround,哈哈，其实只需要三步：1. 打开冰箱门；2. 把大象放进去；3. 关上冰箱门,audio/1692527530.mp3
-B,571,640,-1,idle,stupid,哦，原来是这样啊，我还以为…,audio/1692527532.mp3
+A,10,20,1,idle,peace,Do you like riddles?,audio/1692539639.mp3
+B,30,62,-1,idle,shy,"Yes, I do. They are fun and challenging.",audio/1692539641.mp3
+A,72,130,1,idle,pround,"Well, I have a good one for you. What is so fragile that saying its name breaks it?",audio/1692539642.mp3
+B,140,167,-1,idle,stupid,"Um, I don't know. Is it glass?",audio/1692539643.mp3
+A,177,238,1,idle,contemptuous,"No, that's not it. Glass can be broken by many things, not just by saying its name.",audio/1692539644.mp3
+B,248,284,-1,idle,wronged,"Hey, don't be so snooty. It was just a guess.",audio/1692539645.mp3
+A,294,330,1,idle,cheap,It was a bad guess. You should think more logically.,audio/1692539646.mp3
+B,340,376,-1,idle,cry,You're so mean! You just wanted to make me feel dumb!,audio/1692539647.mp3
+A,386,442,1,idle,peace,"I'm sorry, I didn't mean to upset you. The answer is silence, by the way.",audio/1692539648.mp3

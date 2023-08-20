@@ -1,5 +1,4 @@
 import pygame
-import cv2
 import os,csv
 from datetime import datetime
 import azure.cognitiveservices.speech as speechsdk
@@ -27,7 +26,7 @@ def generate_dict(path:str) -> dict:
         if os.path.isdir(subpath):
             result[name] = generate_dict(subpath)
         else:
-            result =[pygame.image.load(os.path.join(path, x)).convert_alpha() for x in os.listdir(path) if not x.endswith('.DS_Store')]
+            result =[os.path.join(path, x) for x in os.listdir(path) if not x.endswith('.DS_Store')]
             break
     return result
 
@@ -41,7 +40,7 @@ def dealScript() -> list:
 
     with open('script.csv', 'r') as file:
         script = csv.reader(file)
-
+        gap = 10
         voices={'A':'zh-CN-XiaoshuangNeural','B':'zh-CN-XiaoyouNeural'}
         frameNum = 0
         facing=1
@@ -51,7 +50,10 @@ def dealScript() -> list:
                 continue
             line.insert(1, 'idle')
             line.insert(1,facing)
-            facing=-1
+            if facing == 1:
+                facing = -1
+            else:
+                facing = 1
             # if len(line[-1])<2:
             #     continue
             audioFile = 'audio/'+str(int(datetime.now().timestamp()))+".mp3"
@@ -59,8 +61,9 @@ def dealScript() -> list:
             line.append(audioFile)
             audioLen = round(MP3(audioFile).info.length-1,1)
             print(audioLen)
+            frameNum=frameNum+gap
             line.insert(1,frameNum)
-            frameNum = int(frameNum + audioLen*20)
+            frameNum = int(frameNum + audioLen*gap)
             line.insert(2,frameNum)
             result.append(line)
 
@@ -111,14 +114,14 @@ if __name__ == '__main__':
     }
 
     run = True
-    video_writer = cv2.VideoWriter('game_video.avi', cv2.VideoWriter_fourcc(*'XVID'), 30, (width, height))
     current_frame = 0
 
-    # pygame.mixer.pre_init(44100, -16, 1, 512)
+    pygame.mixer.pre_init(44100, -16, 1, 512)
     pygame.init()
-    # pygame.mixer.init()
+    pygame.mixer.init()
 
     voices={}
+    images={}
     while current_frame<int(frames[-1][2]):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -137,7 +140,7 @@ if __name__ == '__main__':
                 k=v[0]
                 if k not in voices.keys():
                     voices[v[-1]] = pygame.mixer.Sound(v[-1])
-                if current_frame == int(v[1])-15:
+                if current_frame == int(v[1]):
                     if not pygame.mixer.get_busy():
                         voices[v[-1]].play()
                 if current_frame>=int(v[1]) and current_frame<=int(v[2]) and pygame.mixer.get_busy():
@@ -145,12 +148,16 @@ if __name__ == '__main__':
                     bodyImgs=imgs[k]['body'][v[4]]
                     faceImgs=imgs[k]['face'][v[5]]
                     body = bodyImgs[int(current_frame/2) % len(bodyImgs)]
-                    face = faceImgs[int(current_frame/2) % len(faceImgs)]
-                    if facing == -1:
-                        body = pygame.transform.flip(body, True, False)
-                        face = pygame.transform.flip(face, True, False)
-                    frame[k]['body']=body
-                    frame[k]['face']=face
+                    face = faceImgs[int(current_frame / 2) % len(faceImgs)]
+                    if body not in images.keys():
+                        images[body] = pygame.image.load(body)
+                    if face not in images.keys():
+                        images[face] = pygame.image.load(face)
+                    if facing == -1 and current_frame==int(v[1]):
+                        images[body] = pygame.transform.flip(images[body], True, False)
+                        images[face] = pygame.transform.flip(images[face], True, False)
+                    frame[k]['body']=images[body]
+                    frame[k]['face']=images[face]
                     # print(current_frame,body,face,playingAudio)
                 screen.blit(frame[k]['body'], (pos[k][0], pos[k][1]))
                 screen.blit(frame[k]['face'], (pos[k][0], pos[k][1]-70))
@@ -159,11 +166,7 @@ if __name__ == '__main__':
 
         # Update the display after each iteration of the while loop
         pygame.display.update()
-        pygame_image = pygame.surfarray.array3d(screen)
-        cv2_image = cv2.cvtColor(pygame_image, cv2.COLOR_RGB2BGR)
-        rotated_frame = cv2.rotate(cv2_image, cv2.ROTATE_90_CLOCKWISE)
-        video_writer.write(rotated_frame)
 
     # Quit the program
     pygame.quit()
-    video_writer.release()
+    # video_writer.release()
